@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_vocab_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: vocabpass123
+      MYSQL_DATABASE: vocabulary_db
+      MYSQL_USER: vocabuser
+      MYSQL_PASSWORD: vocabpass123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    
+  api:
+    build: 
+      context: ./daily_vocab_api 
+      dockerfile: Dockerfile
+    container_name: daily_vocab_api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: mysql+pymysql://vocabuser:vocabpass123@db:3306/vocabulary_db
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+volumes:
+  mysql_data:

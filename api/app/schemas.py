@@ -2,6 +2,16 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import List
 
+class ValidateSentenceRequest(BaseModel):
+    word_id: int
+    sentence: str
+
+
+class ValidateSentenceResponse(BaseModel):
+    score: float 
+    level: str
+    suggestion: str
+    corrected_sentence: str
 
 class WordResponse(BaseModel):
     id: int
@@ -16,13 +26,6 @@ class WordResponse(BaseModel):
 class ValidateSentenceRequest(BaseModel):
     word_id: int
     sentence: str
-
-
-class ValidateSentenceResponse(BaseModel):
-    score: float
-    level: str
-    suggestion: str
-    corrected_sentence: str
 
 
 class SummaryResponse(BaseModel):

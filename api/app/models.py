@@ -1,7 +1,7 @@
-from sqlalchemy import Column, Integer, String, Text, DECIMAL, TIMESTAMP, Enum as SQLEnum
+from sqlalchemy import Column, Integer, String, Text, DECIMAL, TIMESTAMP, Enum as SQLEnum, ForeignKey
+from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.database import Base
-
 
 class Word(Base):
     __tablename__ = "words"
@@ -15,14 +15,18 @@ class Word(Base):
     )
     created_at = Column(TIMESTAMP, default=datetime.utcnow)
 
+    submissions = relationship("PracticeSubmission", back_populates="word_rel")
 
-class PracticeSession(Base):
-    __tablename__ = "practice_sessions"
+class PracticeSubmission(Base):
+    __tablename__ = "practice_submissions" 
     
     id = Column(Integer, primary_key=True, index=True)
-    word_id = Column(Integer, nullable=False)
-    user_sentence = Column(Text, nullable=False)
+    user_id = Column(Integer, default=1, nullable=False) 
+    word_id = Column(Integer, ForeignKey('words.id'), nullable=False)
+    submitted_sentence = Column(Text, nullable=False)
     score = Column(DECIMAL(3, 1))
     feedback = Column(Text)
     corrected_sentence = Column(Text)
-    practiced_at = Column(TIMESTAMP, default=datetime.utcnow)
+    timestamp = Column(TIMESTAMP, default=datetime.utcnow)
+
+    word_rel = relationship("Word", back_populates="submissions")
